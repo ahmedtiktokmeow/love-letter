@@ -26,7 +26,9 @@ body {
   text-align: center;
   cursor: pointer;
   position: relative;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .tap-text {
@@ -36,15 +38,14 @@ body {
   opacity: 0.9;
 }
 
-/* Envelope */
+/* Envelope Body */
 .envelope {
   width: 300px;
   height: 200px;
   position: relative;
   background: #c62828;
-  border-radius: 6px;
+  border-radius: 0 0 6px 6px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.35);
-  /* Removed overflow: hidden so the letter can slide out the top */
 }
 
 /* Flap */
@@ -58,11 +59,11 @@ body {
   border-right: 150px solid transparent;
   border-top: 100px solid #b71c1c;
   transform-origin: top;
-  transition: transform 0.5s ease, z-index 0.5s;
+  transition: transform 0.4s ease;
   z-index: 5;
 }
 
-/* Bottom part of envelope (The front) */
+/* The Front Cover of the Envelope */
 .envelope-bottom {
   position: absolute;
   bottom: 0;
@@ -70,24 +71,23 @@ body {
   height: 100%;
   background: #c62828;
   z-index: 3;
-  border-radius: 6px;
+  border-radius: 0 0 6px 6px;
 }
 
-/* Letter */
+/* The Letter */
 .letter {
   position: absolute;
-  top: 5px; /* Positioned near top of envelope */
+  top: 5px; /* Starts inside at the top */
   left: 50%;
   transform: translateX(-50%);
-  width: 270px;
+  width: 275px;
   height: 180px; 
   background: linear-gradient(135deg, #ff6b6b, #e53935);
   border-radius: 4px;
   padding: 20px;
   color: white;
-  transition: all 0.8s ease;
-  z-index: 2; /* Sits behind the front and flap */
-  overflow: hidden; /* Keeps it tidy while inside */
+  z-index: 2; /* Sits behind the front cover */
+  transition: transform 0.6s ease 0.3s, height 0.6s ease 0.3s; /* Delay ensures flap opens first */
 }
 
 .letter-content {
@@ -109,21 +109,21 @@ body {
 .signature {
   text-align: right;
   font-weight: bold;
-  margin-top: 10px;
 }
 
-/* --- OPEN STATE --- */
+/* --- OPEN STATE ANIMATION --- */
 
-.envelope.open .envelope-flap {
+/* 1. Flap flips up */
+.open .envelope-flap {
   transform: rotateX(180deg);
-  z-index: 1; /* Moves flap behind the letter once open */
+  z-index: 1; /* Move behind letter after opening */
 }
 
-.envelope.open .letter {
-  /* This moves the letter UP out of the envelope and makes it taller */
-  transform: translateX(-50%) translateY(-180px); 
-  height: 350px; 
-  z-index: 4; /* Sits above the envelope front */
+/* 2. Letter slides up from the top */
+.open .letter {
+  transform: translateX(-50%) translateY(-220px); /* Slides it out the top */
+  height: 380px; /* Expands to show text */
+  z-index: 2; 
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
@@ -133,6 +133,7 @@ body {
   font-size: 18px;
   animation: burst 2.4s ease forwards;
   pointer-events: none;
+  z-index: 10;
 }
 
 @keyframes burst {
@@ -140,12 +141,12 @@ body {
   to { transform: translate(var(--x), var(--y)) scale(1.4); opacity: 0; }
 }
 
-/* Mobile */
+/* Mobile Adjustments */
 @media (max-width: 420px) {
   .envelope { width: 260px; height: 180px; }
   .envelope-flap { border-left: 130px solid transparent; border-right: 130px solid transparent; border-top: 90px solid #b71c1c; }
-  .letter { width: 230px; }
-  .envelope.open .letter { transform: translateX(-50%) translateY(-150px); height: 320px; }
+  .letter { width: 240px; }
+  .open .letter { transform: translateX(-50%) translateY(-200px); height: 350px; }
 }
 </style>
 </head>
@@ -157,7 +158,7 @@ body {
 
   <div class="envelope" id="envelope">
     <div class="envelope-flap"></div>
-
+    
     <div class="letter">
       <div class="letter-content">
         <h2>My Dearest Lamoorti,</h2>
@@ -188,16 +189,14 @@ wrapper.addEventListener("click", () => {
 
 function confettiBurst() {
   const emojis = ["❤️","💖","💗","✨","💞"];
-  const rect = envelope.getBoundingClientRect();
-
   for (let i = 0; i < 28; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.innerText = emojis[Math.floor(Math.random() * emojis.length)];
     c.style.left = "50%";
     c.style.top = "50%";
-    c.style.setProperty("--x", `${(Math.random() - 0.5) * 260}px`);
-    c.style.setProperty("--y", `${-Math.random() * 260}px`);
+    c.style.setProperty("--x", `${(Math.random() - 0.5) * 300}px`);
+    c.style.setProperty("--y", `${(Math.random() - 0.5) * -300}px`);
     wrapper.appendChild(c);
     setTimeout(() => c.remove(), 2400);
   }
