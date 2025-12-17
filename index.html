@@ -26,9 +26,7 @@ body {
   text-align: center;
   cursor: pointer;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  z-index: 1;
 }
 
 .tap-text {
@@ -38,7 +36,7 @@ body {
   opacity: 0.9;
 }
 
-/* Envelope Container */
+/* Envelope */
 .envelope {
   width: 300px;
   height: 200px;
@@ -46,7 +44,7 @@ body {
   background: #c62828;
   border-radius: 6px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.35);
-  /* Removed overflow: hidden so letter can slide out */
+  /* Removed overflow: hidden so the letter can slide out the top */
 }
 
 /* Flap */
@@ -61,10 +59,10 @@ body {
   border-top: 100px solid #b71c1c;
   transform-origin: top;
   transition: transform 0.5s ease, z-index 0.5s;
-  z-index: 5; /* Starts on top */
+  z-index: 5;
 }
 
-/* Bottom/Front of envelope */
+/* Bottom part of envelope (The front) */
 .envelope-bottom {
   position: absolute;
   bottom: 0;
@@ -75,56 +73,58 @@ body {
   border-radius: 6px;
 }
 
-/* Letter - Now positioned relative to the wrapper */
+/* Letter */
 .letter {
   position: absolute;
-  bottom: 10px;
+  top: 5px; /* Positioned near top of envelope */
   left: 50%;
   transform: translateX(-50%);
   width: 270px;
-  height: 180px; /* Initial size inside envelope */
+  height: 180px; 
   background: linear-gradient(135deg, #ff6b6b, #e53935);
   border-radius: 4px;
   padding: 20px;
   color: white;
   transition: all 0.8s ease;
-  z-index: 2; /* Behind the flap and bottom */
-  overflow-y: auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  z-index: 2; /* Sits behind the front and flap */
+  overflow: hidden; /* Keeps it tidy while inside */
+}
+
+.letter-content {
+  text-align: left;
 }
 
 .letter h2 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .letter p {
   font-size: 0.9rem;
   line-height: 1.4;
   margin-bottom: 10px;
-  text-align: left;
 }
 
 .signature {
   text-align: right;
   font-weight: bold;
+  margin-top: 10px;
 }
 
-/* --- OPEN STATE ANIMATION --- */
+/* --- OPEN STATE --- */
 
-/* 1. Flip the flap up */
-.open .envelope-flap {
+.envelope.open .envelope-flap {
   transform: rotateX(180deg);
-  z-index: 1; /* Move flap behind letter after opening */
+  z-index: 1; /* Moves flap behind the letter once open */
 }
 
-/* 2. Slide the letter up and make it bigger */
-.open .letter {
-  bottom: 100px; /* Moves it out of the envelope */
-  height: 380px; /* Expands height to show all text */
-  width: 280px;
-  z-index: 4; /* Sits above the envelope but below the flipped flap */
-  transform: translateX(-50%) translateY(-50px);
+.envelope.open .letter {
+  /* This moves the letter UP out of the envelope and makes it taller */
+  transform: translateX(-50%) translateY(-180px); 
+  height: 350px; 
+  z-index: 4; /* Sits above the envelope front */
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
 /* Confetti */
@@ -133,7 +133,6 @@ body {
   font-size: 18px;
   animation: burst 2.4s ease forwards;
   pointer-events: none;
-  z-index: 10;
 }
 
 @keyframes burst {
@@ -141,12 +140,12 @@ body {
   to { transform: translate(var(--x), var(--y)) scale(1.4); opacity: 0; }
 }
 
-/* Mobile Adjustments */
+/* Mobile */
 @media (max-width: 420px) {
   .envelope { width: 260px; height: 180px; }
   .envelope-flap { border-left: 130px solid transparent; border-right: 130px solid transparent; border-top: 90px solid #b71c1c; }
   .letter { width: 230px; }
-  .open .letter { width: 250px; height: 350px; }
+  .envelope.open .letter { transform: translateX(-50%) translateY(-150px); height: 320px; }
 }
 </style>
 </head>
@@ -156,15 +155,17 @@ body {
 <div id="wrapper">
   <div class="tap-text">Tap to open 💌</div>
 
-  <div id="envelope-container" class="envelope">
+  <div class="envelope" id="envelope">
     <div class="envelope-flap"></div>
-    
+
     <div class="letter">
+      <div class="letter-content">
         <h2>My Dearest Lamoorti,</h2>
         <p>Every moment with you feels like a beautiful dream I never want to wake from. Your smile lights up my darkest days, and your laughter is the melody my heart dances to.</p>
         <p>From the first time I saw you, I knew you were special — special in a way words can never fully explain.</p>
         <p>You are my comfort, my inspiration, and my favorite place to be. Forever and always, you have my heart.</p>
         <div class="signature">— Ahmed ❤️</div>
+      </div>
     </div>
 
     <div class="envelope-bottom"></div>
@@ -174,7 +175,7 @@ body {
 <script>
 let confettiPlayed = false;
 const wrapper = document.getElementById("wrapper");
-const envelope = document.getElementById("envelope-container");
+const envelope = document.getElementById("envelope");
 
 wrapper.addEventListener("click", () => {
   envelope.classList.toggle("open");
@@ -187,14 +188,16 @@ wrapper.addEventListener("click", () => {
 
 function confettiBurst() {
   const emojis = ["❤️","💖","💗","✨","💞"];
+  const rect = envelope.getBoundingClientRect();
+
   for (let i = 0; i < 28; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.innerText = emojis[Math.floor(Math.random() * emojis.length)];
     c.style.left = "50%";
     c.style.top = "50%";
-    c.style.setProperty("--x", `${(Math.random() - 0.5) * 300}px`);
-    c.style.setProperty("--y", `${(Math.random() - 0.5) * 300}px`);
+    c.style.setProperty("--x", `${(Math.random() - 0.5) * 260}px`);
+    c.style.setProperty("--y", `${-Math.random() * 260}px`);
     wrapper.appendChild(c);
     setTimeout(() => c.remove(), 2400);
   }
