@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Lamoorti 💌</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(180deg,#020617,#0f1720);
+  font-family: "Georgia", serif;
+  overflow:hidden;
+}
+
+/* envelope */
+.envelope{
+  width:320px;
+  height:220px;
+  background:#b11226;
+  position:relative;
+  border-radius:14px;
+  cursor:pointer;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+  transition:transform .4s;
+}
+.envelope:hover{
+  transform:scale(1.04);
+}
+
+/* flap */
+.envelope::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#e63946;
+  clip-path:polygon(0 0,100% 0,50% 55%);
+  transform-origin:top;
+  transition:transform 1s;
+  border-radius:14px;
+}
+
+/* letter */
+.letter{
+  position:absolute;
+  background:#fff;
+  width:90%;
+  height:90%;
+  left:5%;
+  top:5%;
+  border-radius:10px;
+  padding:20px;
+  box-sizing:border-box;
+  transform:translateY(110%);
+  tran
