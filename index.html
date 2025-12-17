@@ -77,17 +77,27 @@ body {
 /* The Letter */
 .letter {
   position: absolute;
-  top: 5px; /* Starts inside at the top */
+  top: 5px; 
   left: 50%;
   transform: translateX(-50%);
   width: 275px;
   height: 180px; 
   background: linear-gradient(135deg, #ff6b6b, #e53935);
   border-radius: 4px;
-  padding: 20px;
+  padding: 15px;
   color: white;
-  z-index: 2; /* Sits behind the front cover */
-  transition: transform 0.6s ease 0.3s, height 0.6s ease 0.3s; /* Delay ensures flap opens first */
+  z-index: 2; 
+  transition: transform 0.7s ease 0.3s, height 0.7s ease 0.3s;
+  overflow-y: auto; /* Adds scrolling if text is very long */
+}
+
+/* Custom Scrollbar for the Letter */
+.letter::-webkit-scrollbar {
+  width: 4px;
+}
+.letter::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
 }
 
 .letter-content {
@@ -96,34 +106,33 @@ body {
 
 .letter h2 {
   font-size: 1.1rem;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   text-align: center;
 }
 
 .letter p {
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin-bottom: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
 }
 
 .signature {
   text-align: right;
   font-weight: bold;
+  margin-top: 10px;
 }
 
 /* --- OPEN STATE ANIMATION --- */
 
-/* 1. Flap flips up */
 .open .envelope-flap {
   transform: rotateX(180deg);
-  z-index: 1; /* Move behind letter after opening */
+  z-index: 1; 
 }
 
-/* 2. Letter slides up from the top */
 .open .letter {
-  transform: translateX(-50%) translateY(-220px); /* Slides it out the top */
-  height: 380px; /* Expands to show text */
-  z-index: 2; 
+  transform: translateX(-50%) translateY(-280px); /* Lifted higher for longer text */
+  height: 450px; /* Increased height to fit your message */
+  z-index: 4; 
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
@@ -143,10 +152,13 @@ body {
 
 /* Mobile Adjustments */
 @media (max-width: 420px) {
-  .envelope { width: 260px; height: 180px; }
-  .envelope-flap { border-left: 130px solid transparent; border-right: 130px solid transparent; border-top: 90px solid #b71c1c; }
-  .letter { width: 240px; }
-  .open .letter { transform: translateX(-50%) translateY(-200px); height: 350px; }
+  .envelope { width: 280px; height: 180px; }
+  .envelope-flap { border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 90px solid #b71c1c; }
+  .letter { width: 250px; }
+  .open .letter { 
+    transform: translateX(-50%) translateY(-240px); 
+    height: 400px; 
+  }
 }
 </style>
 </head>
@@ -162,9 +174,19 @@ body {
     <div class="letter">
       <div class="letter-content">
         <h2>My Dearest Lamoorti,</h2>
-        <p>Every moment with you feels like a beautiful dream I never want to wake from. Your smile lights up my darkest days, and your laughter is the melody my heart dances to.</p>
-        <p>From the first time I saw you, I knew you were special — special in a way words can never fully explain.</p>
-        <p>You are my comfort, my inspiration, and my favorite place to be. Forever and always, you have my heart.</p>
+        
+        <p>
+          Happy birthday to the love of my life and the one that i adore with all my heart i appreciate you a lot and everything through happy 19th dalo3ti inshallah this year all your wishes come true and you get everything you want allah ywf2k w ynjhk w 3o2bal el malyon sana allah ykhleli eyaki w ykhlena la b3d ya rohi bamot feki w b3sh2k ya aghla eshi 3ndi you are my fav creature and i love when we meet and i cant get my eyes off you admiring your beauty and your pretty eyes you are so stunning baby
+        </p>
+
+        <p>
+          From the first time I saw you, I knew you were special — special in a way words can never fully explain.
+        </p>
+
+        <p>
+          You are my comfort, my inspiration, and my favorite place to be. Forever and always, you have my heart.
+        </p>
+
         <div class="signature">— Ahmed ❤️</div>
       </div>
     </div>
@@ -189,14 +211,14 @@ wrapper.addEventListener("click", () => {
 
 function confettiBurst() {
   const emojis = ["❤️","💖","💗","✨","💞"];
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 30; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.innerText = emojis[Math.floor(Math.random() * emojis.length)];
     c.style.left = "50%";
     c.style.top = "50%";
-    c.style.setProperty("--x", `${(Math.random() - 0.5) * 300}px`);
-    c.style.setProperty("--y", `${(Math.random() - 0.5) * -300}px`);
+    c.style.setProperty("--x", `${(Math.random() - 0.5) * 350}px`);
+    c.style.setProperty("--y", `${(Math.random() - 0.5) * -350}px`);
     wrapper.appendChild(c);
     setTimeout(() => c.remove(), 2400);
   }
